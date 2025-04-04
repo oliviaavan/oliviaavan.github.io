@@ -1,9 +1,8 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Manrope:wght@200..800&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Gowun+Batang&family=Manrope:wght@200..800&display=swap');
 /* 
   font-family: "Manrope", sans-serif;
-  font-family: "Bricolage Grotesque", sans-serif;
+  font-family: "Gowun Batang", serif;
  */
 
 body {
@@ -12,22 +11,36 @@ body {
     background-image: url('images/orchid.jpg');
     background-size: cover;
     background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+    height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+}
+
+.wrapper{
+    background-image: auto;
+    background-size: cover;
 }
 
 p, li, form {
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
 
 h1, h2, h3, h4 {
-    font-family: 'Bricolage Grotesque', sans-serif;
+    font-family: 'Gowun Batang', serif;
 }
 
 h1 {
+    font-size: 2rem;
 }
 
-.flex-2, .flex-2.div {
-    border:1px solid black;
-    margin: 4px;
+h2 {
+    font-size: 1.5rem;
+}
+
+a {
+    font-size: 1.3rem;
 }
 
 .flex-2 {
@@ -38,4 +51,43 @@ h1 {
 
 .flex-2 div {
     flex: 1;
+    padding: 20px; 
+    border: 1px solid black;
+}
+
+.icon{
+    height:36px;
+}
+
+footer {
+    padding:60px, 40px, 20px;
+    text-align: center;
+}
+
+
+@media only screen and (max-width: 600px) {
+    .flex-2 {
+        width:90%;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    body {
+        font-size: 6px;
+    }
+
+    .flex-2 {
+        width: 90%;
+        flex-direction: column;
+    }
+    
+    .wrapper {
+        background-position: 100%;
+    }
 }
