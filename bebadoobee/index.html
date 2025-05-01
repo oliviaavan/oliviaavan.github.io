@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Landing Page</title>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    .landing-content {
+      text-align: center;
+    }
+
+    .landing-content h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .landing-content p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+
+    .start-btn {
+      background: #f00;
+      color: white;
+      font-size: 1.5rem;
+      padding: 15px 30px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .start-btn:hover {
+      background: #c00;
+    }
+  </style>
+
+</head>
+
+<body>
+  
+  <div class="landing-content">
+    <h1>beabadoobee - disappear</h1>
+    <p>Get ready for a journey through the chapters. Click below to start.</p>
+    <button class="start-btn" onclick="startChapter()">Start</button>
+  </div>
+
+  <script>
+    function startChapter() {
+      document.body.innerHTML = "";
+      window.location.href = "chapter1.html";
+    }
+  </script>
+
+</body>
+
+</html>

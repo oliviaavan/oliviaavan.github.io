@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chapter 3</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: sans-serif;
+      height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .scroll-section {
+      height: 100vh;
+      overflow: hidden;
+      position:relative;
+    }
+
+    .horiz-scroll-wrapper {
+      height: 100vh;
+      position: relative;
+    }
+
+    .horiz-scroll-inner {
+      display: flex;
+      height: 100%;
+      width: 500vw; /* 5 images */
+    }
+    .horiz-scroll-inner img {
+      width:100vw;
+    }
+    .carousel-image {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .interval-container {
+      display: none;
+      height: 100vh;
+      width: 100vw;
+      background: black;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      left:0;
+      top:101vh
+    }
+
+    #intervalImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #polaroidBtn {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      /* transform: translateX(-50%); */
+      width: 100vw;
+
+      cursor: pointer;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Scroll-triggered horizontal section -->
+<section class="scroll-section">
+
+  <!-- <div class="horiz-scroll-wrapper"> -->
+    <div class="horiz-scroll-inner">
+      <img src="images/chapter3/042risograph.png" class="carousel-image">
+      <img src="images/chapter3/043risograph.png" class="carousel-image">
+      <img src="images/chapter3/044risograph.png" class="carousel-image">
+      <img src="images/chapter3/045risograph.png" class="carousel-image">
+      <img src="images/chapter3/046risograph.png" class="carousel-image">
+    </div>
+  <!-- </div> -->
+  <img id="polaroidBtn" src="images/polaroid/polaroid1.png" alt="Continue">
+
+</section>
+
+<!-- Interval container for autoplay -->
+<div class="interval-container" id="intervalContainer">
+  <img id="intervalImage" src="" alt="Frame" />
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  let container = document.querySelector('.horiz-scroll-inner')
+  let sections = gsap.utils.toArray('.horiz-scroll-inner img')
+  console.log(sections)
+
+  // Horizontal scroll animation
+  const scrollTween = gsap.to(".horiz-scroll-inner", {
+    xPercent: -100 * (sections.length - 1), // 5 images = 100 * (5-1)
+    //xPercent: -300, // 5 images = 100 * (5-1)
+    ease: "none",
+    scrollTrigger: {
+      trigger: ".scroll-section",
+      pin: true,
+      pinSpacing:true,
+      scrub: true,
+      end: "+=3000", // adjust for scroll length
+      onLeave: () => {
+        document.querySelector(".scroll-section").style.display = "none"; // Hide scroll section
+        document.getElementById("intervalContainer").style.display = "flex"; // Show interval container
+        startImageInterval(); // Start the interval animation
+      }
+    }
+  });
+
+  // Interval logic
+  const intervalImage = document.getElementById("intervalImage");
+  const polaroidBtn = document.getElementById("polaroidBtn");
+  const images = [];
+  for (let i = 47; i <= 66; i++) {
+    images.push(`images/chapter4/${String(i).padStart(3, "0")}risograph.png`);
+  }
+
+  let index = 0;
+
+  function startImageInterval() {
+    const interval = setInterval(() => {
+      if (index < images.length) {
+        intervalImage.src = images[index];
+        index++;
+        if (index === images.length) {
+          polaroidBtn.style.display = "block"; // Show the polaroid button
+        }
+      } else {
+        clearInterval(interval); // Stop the interval once the images are done
+      }
+    }, 155);
+  }
+
+  // Polaroid button click event
+  polaroidBtn.addEventListener("click", () => {
+    alert("Polaroid clicked!");
+    // window.location.href = "chapter4.html"; // Uncomment if needed to navigate
+  });
+</script>
+
+</body>
+</html>
