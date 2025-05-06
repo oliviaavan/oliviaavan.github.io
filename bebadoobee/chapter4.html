@@ -3,24 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chapter 3</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 
+  <title>Chapter 4</title>
+  <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       overflow: hidden;
+      background: black;
     }
 
     .interval-container {
       display: none;
       height: 100vh;
       width: 100vw;
-      background: black;
       justify-content: center;
       align-items: center;
       position: relative;
@@ -32,36 +30,33 @@
       object-fit: cover;
     }
 
-    /* Polaroid Button Style */
-    #polaroidBtn2 {
+    #finalBtn {
       position: absolute;
       top: 0;
       left: 0;
       z-index: 9;
       width: 100vw;
       height: 100vh;
-      display: none;  /* Initially hidden */
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Interval Autoplay Container -->
   <div class="interval-container" id="intervalContainer">
-    <img id="intervalImage" src="" alt="Chapter 5 Image">
-    <img src="images/polaroid/polaroid2.png" alt="Polaroid 2" id="polaroidBtn2">
+    <img id="intervalImage" src="" alt="Chapter 4 Image">
+    <img src="images/polaroid/polaroid3.png" alt="Final Button" id="finalBtn">
   </div>
 
   <script>
     const intervalContainer = document.getElementById("intervalContainer");
     const intervalImage = document.getElementById("intervalImage");
-    const polaroidBtn2 = document.getElementById("polaroidBtn2");
+    const finalBtn = document.getElementById("finalBtn");
 
-    // Image sources for interval 67-78
     const intervalImages = [];
-    for (let i = 67; i <= 78; i++) {
+    for (let i = 79; i <= 95; i++) {
       const paddedId = String(i).padStart(3, '0');
-      intervalImages.push(`images/chapter5/${paddedId}risograph.png`);
+      intervalImages.push(`images/chapter7/${paddedId}risograph.png`);
     }
 
     let intervalIndex = 0;
@@ -72,25 +67,24 @@
       intervalIndex++;
       if (intervalIndex >= intervalImages.length) {
         clearInterval(intervalTimer);
-        polaroidBtn2.style.display = "block"; // Show New Button after last image
+        finalBtn.style.display = "block"; // show final button
       }
     }
 
     function startImageInterval() {
       intervalContainer.style.display = 'flex';
       showIntervalImage();
-      intervalTimer = setInterval(showIntervalImage, 180);
+      intervalTimer = setInterval(showIntervalImage, 250);
     }
 
-    // Start autoplay if 'autoplay=true' parameter is present
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('autoplay') === 'true') {
       startImageInterval();
     }
 
-    // Polaroid Button 2 click event
-    polaroidBtn2.addEventListener('click', function () {
-      window.location.href = 'chapter4.html?autoplay=true';
+    finalBtn.addEventListener('click', function () {
+      alert("End of Chapter 4!");
+      // or route somewhere else
     });
   </script>
 
