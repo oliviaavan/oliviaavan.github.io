@@ -3,40 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chapter 3</title>
+  <title>Chapter 3 - Horizontal Scroll</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: sans-serif;
-      height: 100vh;
-      overflow-x: hidden;
+    * {
+      box-sizing: border-box;
     }
 
-    .scroll-section {
-      height: 100vh;
-      overflow: hidden;
-      position:relative;
-    }
-
-    .horiz-scroll-wrapper {
-      height: 100vh;
-      position: relative;
-    }
-
-    .horiz-scroll-inner {
-      display: flex;
+    html, body {
+      margin: 0;
+      padding: 0;
       height: 100%;
-      width: 500vw; /* 5 images */
+      overflow: hidden;
     }
-    .horiz-scroll-inner img {
-      width:100vw;
+
+    .carousel-container {
+      display: flex;
+      height: 100vh;
+      overflow-x: scroll;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
     }
+
     .carousel-image {
+      flex-shrink: 0;
       width: 100vw;
       height: 100vh;
       object-fit: cover;
-      flex-shrink: 0;
+      scroll-snap-align: start;
     }
 
     .interval-container {
@@ -46,9 +39,7 @@
       background: black;
       justify-content: center;
       align-items: center;
-      position: absolute;
-      left:0;
-      top:101vh
+      position: relative;
     }
 
     #intervalImage {
@@ -57,101 +48,77 @@
       object-fit: cover;
     }
 
-    #polaroidBtn {
-      display: none;
+    #continueBtn {
       position: absolute;
       top: 0;
       left: 0;
-      /* transform: translateX(-50%); */
+      z-index: 9;
       width: 100vw;
-
-      cursor: pointer;
-      z-index: 999;
+      height: auto;
+      display: none;
     }
   </style>
 </head>
 <body>
 
-<!-- Scroll-triggered horizontal section -->
-<section class="scroll-section">
+  <!-- Horizontal Scroll Images 42–46 -->
+  <div class="carousel-container" id="carouselContainer">
+    <img src="images/chapter3/042risograph.png" alt="Image 42" class="carousel-image">
+    <img src="images/chapter3/043risograph.png" alt="Image 43" class="carousel-image">
+    <img src="images/chapter3/044risograph.png" alt="Image 44" class="carousel-image">
+    <img src="images/chapter3/045risograph.png" alt="Image 45" class="carousel-image">
+    <img src="images/chapter3/046risograph.png" alt="Image 46" class="carousel-image">
+  </div>
 
-  <!-- <div class="horiz-scroll-wrapper"> -->
-    <div class="horiz-scroll-inner">
-      <img src="images/chapter3/042risograph.png" class="carousel-image">
-      <img src="images/chapter3/043risograph.png" class="carousel-image">
-      <img src="images/chapter3/044risograph.png" class="carousel-image">
-      <img src="images/chapter3/045risograph.png" class="carousel-image">
-      <img src="images/chapter3/046risograph.png" class="carousel-image">
-    </div>
-  <!-- </div> -->
-  <img id="polaroidBtn" src="images/polaroid/polaroid1.png" alt="Continue">
+  <!-- Interval Autoplay Container -->
+  <div class="interval-container" id="intervalContainer">
+    <img id="intervalImage" src="" alt="Chapter 4 Image">
+    <img src="images/polaroid/polaroid1.png" alt="Continue" id="continueBtn">
+  </div>
 
-</section>
+  <script>
+    const scrollContainer = document.getElementById("carouselContainer");
+    const intervalContainer = document.getElementById("intervalContainer");
+    const intervalImage = document.getElementById("intervalImage");
+    const continueBtn = document.getElementById("continueBtn");
 
-<!-- Interval container for autoplay -->
-<div class="interval-container" id="intervalContainer">
-  <img id="intervalImage" src="" alt="Frame" />
-</div>
+    const intervalImages = [];
+    for (let i = 47; i <= 67; i++) {
+      const paddedId = String(i).padStart(3, '0');
+      intervalImages.push(`images/chapter4/${paddedId}risograph.png`);
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+    let intervalIndex = 0;
+    let intervalTimer;
 
-<script>
-  gsap.registerPlugin(ScrollTrigger);
-
-  let container = document.querySelector('.horiz-scroll-inner')
-  let sections = gsap.utils.toArray('.horiz-scroll-inner img')
-  console.log(sections)
-
-  // Horizontal scroll animation
-  const scrollTween = gsap.to(".horiz-scroll-inner", {
-    xPercent: -100 * (sections.length - 1), // 5 images = 100 * (5-1)
-    //xPercent: -300, // 5 images = 100 * (5-1)
-    ease: "none",
-    scrollTrigger: {
-      trigger: ".scroll-section",
-      pin: true,
-      pinSpacing:true,
-      scrub: true,
-      end: "+=3000", // adjust for scroll length
-      onLeave: () => {
-        document.querySelector(".scroll-section").style.display = "none"; // Hide scroll section
-        document.getElementById("intervalContainer").style.display = "flex"; // Show interval container
-        startImageInterval(); // Start the interval animation
+    function showIntervalImage() {
+      intervalImage.src = intervalImages[intervalIndex];
+      intervalIndex++;
+      if (intervalIndex >= intervalImages.length) {
+        clearInterval(intervalTimer);
+        continueBtn.style.display = "block"; // Show Polaroid button after last image
       }
     }
-  });
 
-  // Interval logic
-  const intervalImage = document.getElementById("intervalImage");
-  const polaroidBtn = document.getElementById("polaroidBtn");
-  const images = [];
-  for (let i = 47; i <= 66; i++) {
-    images.push(`images/chapter4/${String(i).padStart(3, "0")}risograph.png`);
-  }
+    function startImageInterval() {
+      scrollContainer.style.display = 'none';
+      intervalContainer.style.display = 'flex';
+      showIntervalImage();
+      intervalTimer = setInterval(showIntervalImage, 155);
+    }
 
-  let index = 0;
-
-  function startImageInterval() {
-    const interval = setInterval(() => {
-      if (index < images.length) {
-        intervalImage.src = images[index];
-        index++;
-        if (index === images.length) {
-          polaroidBtn.style.display = "block"; // Show the polaroid button
-        }
-      } else {
-        clearInterval(interval); // Stop the interval once the images are done
+    // Detect end of scroll
+    scrollContainer.addEventListener('scroll', () => {
+      const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+      if (scrollContainer.scrollLeft >= maxScrollLeft - 10) {
+        setTimeout(startImageInterval, 100);
       }
-    }, 155);
-  }
+    });
 
-  // Polaroid button click event
-  polaroidBtn.addEventListener("click", () => {
-    alert("Polaroid clicked!");
-    // window.location.href = "chapter4.html"; // Uncomment if needed to navigate
-  });
-</script>
+    continueBtn.addEventListener("click", () => {
+      alert("Continue clicked!"); // Replace this with whatever you want
+    });
+  </script>
 
 </body>
 </html>
