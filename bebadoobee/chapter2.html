@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chapter 2 - Horizontal Scroll</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .carousel-container {
+      display: flex;
+      height: 100vh;
+      overflow-x: scroll;
+      scroll-behavior: smooth;
+      /* Removed scroll-snap-type for free scroll */
+    }
+
+    .carousel-image {
+      flex-shrink: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      /* Removed scroll-snap-align for free scroll */
+    }
+
+    .interval-container {
+      display: none;
+      height: 100vh;
+      width: 100vw;
+      background: black;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    #intervalImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #polaroidBtn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 9;
+      width: 100vw;
+      height: 100vh;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Horizontal Scroll Images 42–46 -->
+  <div class="carousel-container" id="carouselContainer">
+    <img src="images/chapter3/042risograph.png" alt="Image 42" class="carousel-image">
+    <img src="images/chapter3/043risograph.png" alt="Image 43" class="carousel-image">
+    <img src="images/chapter3/044risograph.png" alt="Image 44" class="carousel-image">
+    <img src="images/chapter3/045risograph.png" alt="Image 45" class="carousel-image">
+    <img src="images/chapter3/046risograph.png" alt="Image 46" class="carousel-image">
+  </div>
+
+  <!-- autoplay container -->
+  <div class="interval-container" id="intervalContainer">
+    <img id="intervalImage" src="" alt="Chapter 4 Image">
+    <img src="images/polaroid/polaroid1.png" alt="Polaroid" id="polaroidBtn">
+  </div>
+
+  <script>
+    const scrollContainer = document.getElementById("carouselContainer");
+    const intervalContainer = document.getElementById("intervalContainer");
+    const intervalImage = document.getElementById("intervalImage");
+    const polaroidBtn = document.getElementById("polaroidBtn");
+
+
+    const intervalImages = [];
+    for (let i = 47; i <= 66; i++) {
+      const paddedId = String(i).padStart(3, '0');
+      intervalImages.push(`images/chapter4/${paddedId}risograph.png`);
+    }
+
+    let intervalIndex = 0;
+    let intervalTimer;
+
+    function showIntervalImage() {
+      intervalImage.src = intervalImages[intervalIndex];
+      intervalIndex++;
+      if (intervalIndex >= intervalImages.length) {
+        clearInterval(intervalTimer);
+        polaroidBtn.style.display = "block"; // Shows button after last frame
+      }
+    }
+
+    function startImageInterval() {
+      scrollContainer.style.display = 'none';
+      intervalContainer.style.display = 'flex';
+      showIntervalImage();
+      intervalTimer = setInterval(showIntervalImage, 155);
+    }
+
+    // Detect end of horizontal scroll
+    scrollContainer.addEventListener('scroll', () => {
+      const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+      if (scrollContainer.scrollLeft >= maxScrollLeft - 10) {
+        setTimeout(startImageInterval, 100);
+      }
+    });
+
+    // Button click leads to next chapter
+    polaroidBtn.addEventListener('click', function () {
+      window.location.href = 'chapter3.html?autoplay=true';
+    });
+  </script>
+
+</body>
+</html>

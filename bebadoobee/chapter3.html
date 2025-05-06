@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chapter 3 - Horizontal Scroll</title>
+  <title>Chapter 3</title>
   <style>
     * {
       box-sizing: border-box;
@@ -14,22 +14,6 @@
       padding: 0;
       height: 100%;
       overflow: hidden;
-    }
-
-    .carousel-container {
-      display: flex;
-      height: 100vh;
-      overflow-x: scroll;
-      scroll-behavior: smooth;
-      scroll-snap-type: x mandatory;
-    }
-
-    .carousel-image {
-      flex-shrink: 0;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      scroll-snap-align: start;
     }
 
     .interval-container {
@@ -48,45 +32,36 @@
       object-fit: cover;
     }
 
-    #polaroidBtn {
+    /* Polaroid Button Style */
+    #polaroidBtn2 {
       position: absolute;
       top: 0;
       left: 0;
       z-index: 9;
       width: 100vw;
       height: 100vh;
-      display: none;
+      display: none;  /* Initially hidden */
     }
   </style>
 </head>
 <body>
 
-  <!-- Horizontal Scroll Images 42–46 -->
-  <div class="carousel-container" id="carouselContainer">
-    <img src="images/chapter3/042risograph.png" alt="Image 42" class="carousel-image">
-    <img src="images/chapter3/043risograph.png" alt="Image 43" class="carousel-image">
-    <img src="images/chapter3/044risograph.png" alt="Image 44" class="carousel-image">
-    <img src="images/chapter3/045risograph.png" alt="Image 45" class="carousel-image">
-    <img src="images/chapter3/046risograph.png" alt="Image 46" class="carousel-image">
-  </div>
-
   <!-- Interval Autoplay Container -->
   <div class="interval-container" id="intervalContainer">
-    <img id="intervalImage" src="" alt="Chapter 4 Image">
-    <img src="images/polaroid/polaroid1.png" alt="Polaroid" id="polaroidBtn">
+    <img id="intervalImage" src="" alt="Chapter 5 Image">
+    <img src="images/polaroid/polaroid2.png" alt="Polaroid 2" id="polaroidBtn2">
   </div>
 
   <script>
-    const scrollContainer = document.getElementById("carouselContainer");
     const intervalContainer = document.getElementById("intervalContainer");
     const intervalImage = document.getElementById("intervalImage");
-    const polaroidBtn = document.getElementById("polaroidBtn");
+    const polaroidBtn2 = document.getElementById("polaroidBtn2");
 
-    // Image sources for interval 47-66
+    // Image sources for interval 67-78
     const intervalImages = [];
-    for (let i = 47; i <= 66; i++) {
+    for (let i = 67; i <= 78; i++) {
       const paddedId = String(i).padStart(3, '0');
-      intervalImages.push(`images/chapter4/${paddedId}risograph.png`);
+      intervalImages.push(`images/chapter5/${paddedId}risograph.png`);
     }
 
     let intervalIndex = 0;
@@ -97,55 +72,27 @@
       intervalIndex++;
       if (intervalIndex >= intervalImages.length) {
         clearInterval(intervalTimer);
-        polaroidBtn.style.display = "block"; // Show Polaroid button after last image
+        polaroidBtn2.style.display = "block"; // Show New Button after last image
       }
     }
 
     function startImageInterval() {
-      scrollContainer.style.display = 'none';
       intervalContainer.style.display = 'flex';
       showIntervalImage();
-      intervalTimer = setInterval(showIntervalImage, 155);
+      intervalTimer = setInterval(showIntervalImage, 180);
     }
 
-    // Detect end of scroll
-    scrollContainer.addEventListener('scroll', () => {
-      const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-      if (scrollContainer.scrollLeft >= maxScrollLeft - 10) {
-        setTimeout(startImageInterval, 100);
-      }
-    });
+    // Start autoplay if 'autoplay=true' parameter is present
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('autoplay') === 'true') {
+      startImageInterval();
+    }
 
-    // Polaroid Button click event
-    polaroidBtn.addEventListener('click', function () {
-      console.log('Polaroid Button Clicked');
-      // Add the interval for showing new images after Polaroid button click
-      const polaroidImages = [];
-      for (let i = 67; i <= 78; i++) {
-        const paddedId = String(i).padStart(3, '0');
-        polaroidImages.push(`images/chapter5/${paddedId}risograph.png`);
-      }
-
-      let polaroidIndex = 0;
-
-      // Function to show polaroid images on button click
-      function showPolaroidImage() {
-        if (polaroidIndex === 0) {
-          polaroidBtn.style.display = "none"; // Hide Polaroid button as image 67 appears
-        }
-        intervalImage.src = polaroidImages[polaroidIndex];
-        polaroidIndex++;
-        if (polaroidIndex >= polaroidImages.length) {
-          clearInterval(intervalTimer);
-        }
-      }
-
-      function startPolaroidInterval() {
-        intervalContainer.style.display = "flex";
-        intervalTimer = setInterval(showPolaroidImage, 155); // Adjust interval time if needed
-      }
-
-      startPolaroidInterval(); // Start polaroid interval on button click
+    // Polaroid Button 2 click event
+    polaroidBtn2.addEventListener('click', function () {
+      console.log('Polaroid 2 Button Clicked');
+      // Action for the polaroidBtn2 click
+      alert("Polaroid 2 Button Clicked!");
     });
   </script>
 
