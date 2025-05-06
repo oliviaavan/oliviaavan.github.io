@@ -48,13 +48,13 @@
       object-fit: cover;
     }
 
-    #continueBtn {
+    #polarioidBtn {
       position: absolute;
       top: 0;
       left: 0;
       z-index: 9;
       width: 100vw;
-      height: auto;
+      height: 100vh;
       display: none;
     }
   </style>
@@ -73,17 +73,18 @@
   <!-- Interval Autoplay Container -->
   <div class="interval-container" id="intervalContainer">
     <img id="intervalImage" src="" alt="Chapter 4 Image">
-    <img src="images/polaroid/polaroid1.png" alt="Continue" id="continueBtn">
+    <img src="images/polaroid/polaroid1.png" alt="Polaroid" id="polarioidBtn">
   </div>
 
   <script>
     const scrollContainer = document.getElementById("carouselContainer");
     const intervalContainer = document.getElementById("intervalContainer");
     const intervalImage = document.getElementById("intervalImage");
-    const continueBtn = document.getElementById("continueBtn");
+    const polaroidBtn = document.getElementById("polarioidBtn");
 
+    // Image sources for interval 47-66
     const intervalImages = [];
-    for (let i = 47; i <= 67; i++) {
+    for (let i = 47; i <= 66; i++) {
       const paddedId = String(i).padStart(3, '0');
       intervalImages.push(`images/chapter4/${paddedId}risograph.png`);
     }
@@ -96,7 +97,7 @@
       intervalIndex++;
       if (intervalIndex >= intervalImages.length) {
         clearInterval(intervalTimer);
-        continueBtn.style.display = "block"; // Show Polaroid button after last image
+        polaroidBtn.style.display = "block"; // Show Polaroid button after last image
       }
     }
 
@@ -111,12 +112,37 @@
     scrollContainer.addEventListener('scroll', () => {
       const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
       if (scrollContainer.scrollLeft >= maxScrollLeft - 10) {
-        setTimeout(startImageInterval, 100);
+        setTimeout(startImageInterval, 400);
       }
     });
 
-    continueBtn.addEventListener("click", () => {
-      alert("Continue clicked!"); // Replace this with whatever you want
+    // Polaroid Button click event
+    polaroidBtn.addEventListener('click', function () {
+      console.log('Polaroid Button Clicked');
+      // Add the interval for showing new images after Polaroid button click
+      const polaroidImages = [];
+      for (let i = 67; i <= 73; i++) {
+        const paddedId = String(i).padStart(3, '0');
+        polaroidImages.push(`images/chapter4/${paddedId}risograph.png`);
+      }
+
+      let polaroidIndex = 0;
+
+      // Function to show polaroid images on button click
+      function showPolaroidImage() {
+        intervalImage.src = polaroidImages[polaroidIndex];
+        polaroidIndex++;
+        if (polaroidIndex >= polaroidImages.length) {
+          clearInterval(intervalTimer); // Stop the interval when all images have been shown
+        }
+      }
+
+      function startPolaroidInterval() {
+        intervalContainer.style.display = "flex";
+        intervalTimer = setInterval(showPolaroidImage, 155); // Adjust interval time if needed
+      }
+
+      startPolaroidInterval(); // Start polaroid interval on button click
     });
   </script>
 
