@@ -48,7 +48,7 @@
       object-fit: cover;
     }
 
-    #polarioidBtn {
+    #polaroidBtn {
       position: absolute;
       top: 0;
       left: 0;
@@ -73,14 +73,14 @@
   <!-- Interval Autoplay Container -->
   <div class="interval-container" id="intervalContainer">
     <img id="intervalImage" src="" alt="Chapter 4 Image">
-    <img src="images/polaroid/polaroid1.png" alt="Polaroid" id="polarioidBtn">
+    <img src="images/polaroid/polaroid1.png" alt="Polaroid" id="polaroidBtn">
   </div>
 
   <script>
     const scrollContainer = document.getElementById("carouselContainer");
     const intervalContainer = document.getElementById("intervalContainer");
     const intervalImage = document.getElementById("intervalImage");
-    const polaroidBtn = document.getElementById("polarioidBtn");
+    const polaroidBtn = document.getElementById("polaroidBtn");
 
     // Image sources for interval 47-66
     const intervalImages = [];
@@ -112,7 +112,7 @@
     scrollContainer.addEventListener('scroll', () => {
       const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
       if (scrollContainer.scrollLeft >= maxScrollLeft - 10) {
-        setTimeout(startImageInterval, 400);
+        setTimeout(startImageInterval, 100);
       }
     });
 
@@ -121,19 +121,22 @@
       console.log('Polaroid Button Clicked');
       // Add the interval for showing new images after Polaroid button click
       const polaroidImages = [];
-      for (let i = 67; i <= 73; i++) {
+      for (let i = 67; i <= 78; i++) {
         const paddedId = String(i).padStart(3, '0');
-        polaroidImages.push(`images/chapter4/${paddedId}risograph.png`);
+        polaroidImages.push(`images/chapter5/${paddedId}risograph.png`);
       }
 
       let polaroidIndex = 0;
 
       // Function to show polaroid images on button click
       function showPolaroidImage() {
+        if (polaroidIndex === 0) {
+          polaroidBtn.style.display = "none"; // Hide Polaroid button as image 67 appears
+        }
         intervalImage.src = polaroidImages[polaroidIndex];
         polaroidIndex++;
         if (polaroidIndex >= polaroidImages.length) {
-          clearInterval(intervalTimer); // Stop the interval when all images have been shown
+          clearInterval(intervalTimer);
         }
       }
 
