@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chapter 2 - Horizontal Scroll</title>
+  <title>Chapter 2</title>
   <style>
     * {
       box-sizing: border-box;
@@ -16,20 +16,18 @@
       overflow: hidden;
     }
 
-    .carousel-container {
+    .scroll-container {
       display: flex;
       height: 100vh;
       overflow-x: scroll;
       scroll-behavior: smooth;
-      /* Removed scroll-snap-type for free scroll */
     }
 
-    .carousel-image {
+    .scroll-image {
       flex-shrink: 0;
       width: 100vw;
       height: 100vh;
       object-fit: cover;
-      /* Removed scroll-snap-align for free scroll */
     }
 
     .interval-container {
@@ -62,12 +60,12 @@
 <body>
 
   <!-- Horizontal Scroll Images 42–46 -->
-  <div class="carousel-container" id="carouselContainer">
-    <img src="images/chapter3/042risograph.png" alt="Image 42" class="carousel-image">
-    <img src="images/chapter3/043risograph.png" alt="Image 43" class="carousel-image">
-    <img src="images/chapter3/044risograph.png" alt="Image 44" class="carousel-image">
-    <img src="images/chapter3/045risograph.png" alt="Image 45" class="carousel-image">
-    <img src="images/chapter3/046risograph.png" alt="Image 46" class="carousel-image">
+  <div class="scroll-container" id="scrollContainer">
+    <img src="images/chapter3/042risograph.png" alt="Image 42" class="scroll-image">
+    <img src="images/chapter3/043risograph.png" alt="Image 43" class="scroll-image">
+    <img src="images/chapter3/044risograph.png" alt="Image 44" class="scroll-image">
+    <img src="images/chapter3/045risograph.png" alt="Image 45" class="scroll-image">
+    <img src="images/chapter3/046risograph.png" alt="Image 46" class="scroll-image">
   </div>
 
   <!-- autoplay container -->
@@ -77,7 +75,7 @@
   </div>
 
   <script>
-    const scrollContainer = document.getElementById("carouselContainer");
+    const scrollContainer = document.getElementById("scrollContainer");
     const intervalContainer = document.getElementById("intervalContainer");
     const intervalImage = document.getElementById("intervalImage");
     const polaroidBtn = document.getElementById("polaroidBtn");
@@ -97,7 +95,7 @@
       intervalIndex++;
       if (intervalIndex >= intervalImages.length) {
         clearInterval(intervalTimer);
-        polaroidBtn.style.display = "block"; // Shows button after last frame
+        polaroidBtn.style.display = "block"; // shows button after last frame
       }
     }
 
@@ -108,7 +106,7 @@
       intervalTimer = setInterval(showIntervalImage, 155);
     }
 
-    // Detect end of horizontal scroll
+    // end of horizontal scroll
     scrollContainer.addEventListener('scroll', () => {
       const maxScrollLeft = scrollContainer.scrollWidth - scrollContainer.clientWidth;
       if (scrollContainer.scrollLeft >= maxScrollLeft - 10) {
@@ -116,7 +114,7 @@
       }
     });
 
-    // Button click leads to next chapter
+    // button leads to next chapter
     polaroidBtn.addEventListener('click', function () {
       window.location.href = 'chapter3.html?autoplay=true';
     });
