@@ -15,66 +15,102 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
     }
     .image-container img {
       width: 100vw;
       height: 100vh;
       object-fit: cover;
+      transition: opacity 1s ease-out; /* Fade transition */
+    }
+
+    /* Cinematic black overlay */
+    #blackOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      z-index: 9999;
+      animation: fadeIn 2s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Cinematic fade-in overlay -->
+  <div id="blackOverlay"></div>
+
   <div class="image-container">
     <img id="image-display" src="images/chapter12/116risograph.png" alt="Sequence" />
   </div>
 
   <script>
     const imageElement = document.getElementById("image-display");
-  
-    // First sequence: 116–169
+
     let currentImageIndex = 116;
-    
     const firstMax = 169;
 
-    let intervalTime = 300;        // Faster starting point
-    const speedUpRate = 20;        // Smaller change = smoother ramp-up
-    const minInterval = 80;  
-  
+    let intervalTime = 300;
+    const speedUpRate = 20;
+    const minInterval = 80;
+
     function playFirstSequence() {
       currentImageIndex++;
       imageElement.src = `images/chapter12/${currentImageIndex}risograph.png`;
-  
+
       if (currentImageIndex < firstMax) {
         if (intervalTime > minInterval) {
           intervalTime -= speedUpRate;
         }
         setTimeout(playFirstSequence, intervalTime);
       } else {
-        // When the first sequence ends, trigger second
-        setTimeout(playSecondSequence, 500);
+        setTimeout(transitionToSecondSequence, 500); // Delay transition before second sequence
       }
     }
-  
-    // Second sequence: 170–203
-    let secondImageIndex = 169; // Set to 169 so it starts at 170
+
+    let secondImageIndex = 169;
     const secondMax = 203;
     const secondInterval = 160;
-  
+
+    function transitionToSecondSequence() {
+      // Fade-out the current image
+      imageElement.style.opacity = 0;
+
+      // After the fade-out transition ends, start the second sequence
+      setTimeout(playSecondSequence, 1000); // Wait for the fade-out to complete
+    }
+
     function playSecondSequence() {
+      // Reset opacity back to 1 for second sequence
+      imageElement.style.opacity = 1;
+      
       secondImageIndex++;
       if (secondImageIndex > secondMax) return;
-  
+
       const secondImagePath = `images/chapter14/${secondImageIndex}risograph.png`;
       imageElement.src = secondImagePath;
       console.log(`Showing: ${secondImagePath}`);
-  
+
       setTimeout(playSecondSequence, secondInterval);
     }
-  
-    // Start the first sequence
+
     setTimeout(playFirstSequence, intervalTime);
+
+    // Remove cinematic overlay after fade
+    window.addEventListener("load", () => {
+      const overlay = document.getElementById("blackOverlay");
+      setTimeout(() => {
+        overlay.remove();
+      }, 2000);
+    });
   </script>
-  
 
 </body>
 </html>
