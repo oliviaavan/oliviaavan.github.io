@@ -3,89 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>Chapter 5</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
       background: black;
     }
-
-    .scroll-container {
-      height: 100vh;
-      width: 100vw;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow-y: scroll;
-    }
-
     .image-container {
-      width: 100%;
+      width: 100vw;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
     }
-
-    #intervalImage {
-      width: auto;
-      height: 100%;
-      object-fit: contain;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
+    .image-container img {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
     }
   </style>
 </head>
 <body>
-
-  <div class="scroll-container" id="scrollContainer">
-    <div class="image-container">
-      <img id="intervalImage" src="" alt="Chapter 5 Image">
-    </div>
+  <div class="image-container">
+    <img id="image-display" src="images/chapter12/116risograph.png" alt="Sequence" />
   </div>
 
   <script>
-    const intervalImage = document.getElementById("intervalImage");
+    const imageElement = document.getElementById("image-display");
+  
+    // First sequence: 116–169
+    let currentImageIndex = 116;
+    
+    const firstMax = 169;
 
-    // Define your image sequence
-    const intervalImages = [];
-    for (let i = 116; i <= 169; i++) {
-      const paddedId = String(i).padStart(3, '0');
-      intervalImages.push(`images/chapter12/${paddedId}risograph.png`);
-    }
-
-    let imageIndex = 0;
-    let intervalTimer;
-
-    function showIntervalImage() {
-      if (imageIndex < intervalImages.length) {
-        // Fade out the current image before changing it
-        intervalImage.style.opacity = 0;
-
-        setTimeout(() => {
-          console.log('Loading image: ', intervalImages[imageIndex]); // Debugging
-          intervalImage.src = intervalImages[imageIndex];
-          intervalImage.onload = () => {
-            intervalImage.style.opacity = 1; // Fade in the new image
-          };
-        }, 500); // Fade duration before changing image
-        imageIndex++;
+    let intervalTime = 300;        // Faster starting point
+    const speedUpRate = 20;        // Smaller change = smoother ramp-up
+    const minInterval = 80;  
+  
+    function playFirstSequence() {
+      currentImageIndex++;
+      imageElement.src = `images/chapter12/${currentImageIndex}risograph.png`;
+  
+      if (currentImageIndex < firstMax) {
+        if (intervalTime > minInterval) {
+          intervalTime -= speedUpRate;
+        }
+        setTimeout(playFirstSequence, intervalTime);
       } else {
-        clearInterval(intervalTimer); // Stop when all images are shown
+        // When the first sequence ends, trigger second
+        setTimeout(playSecondSequence, 500);
       }
     }
-
-    function startImageInterval() {
-      showIntervalImage(); // Show first image immediately
-      intervalTimer = setInterval(showIntervalImage, 155); // Change images every 155ms
+  
+    // Second sequence: 170–203
+    let secondImageIndex = 169; // Set to 169 so it starts at 170
+    const secondMax = 203;
+    const secondInterval = 160;
+  
+    function playSecondSequence() {
+      secondImageIndex++;
+      if (secondImageIndex > secondMax) return;
+  
+      const secondImagePath = `images/chapter14/${secondImageIndex}risograph.png`;
+      imageElement.src = secondImagePath;
+      console.log(`Showing: ${secondImagePath}`);
+  
+      setTimeout(playSecondSequence, secondInterval);
     }
-
-    startImageInterval(); // Start the image interval on page load
+  
+    // Start the first sequence
+    setTimeout(playFirstSequence, intervalTime);
   </script>
+  
 
 </body>
 </html>
