@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-
   <title>Chapter 4</title>
   <style>
     html, body {
@@ -28,16 +27,28 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
     }
 
     #finalBtn {
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 50%;
+      left: 50%;
       z-index: 9;
-      width: 100vw;
-      height: 100vh;
+      padding: 20px 40px;
+      font-size: 1.5rem;
+      background-color: white;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
       display: none;
+      transform: translate(-50%, -50%);
+    }
+
+    #finalBtn:hover {
+      background-color: #f0f0f0;
     }
   </style>
 </head>
@@ -45,7 +56,7 @@
 
   <div class="interval-container" id="intervalContainer">
     <img id="intervalImage" src="" alt="Chapter 4 Image">
-    <img src="images/polaroid/polaroid3.png" alt="Final Button" id="finalBtn">
+    <button id="finalBtn" onclick="location.href='chapter5.html'">snap back to reality</button>
   </div>
 
   <script>
@@ -53,39 +64,63 @@
     const intervalImage = document.getElementById("intervalImage");
     const finalBtn = document.getElementById("finalBtn");
 
-    const intervalImages = [];
-    for (let i = 79; i <= 95; i++) {
-      const paddedId = String(i).padStart(3, '0');
-      intervalImages.push(`images/chapter7/${paddedId}risograph.png`);
-    }
+    // Define all four sequences
+    const sequence1 = Array.from({length: 11}, (_, i) => `images/chapter8/${String(i + 85).padStart(3, '0')}risograph.png`);
+    const sequence2 = Array.from({length: 8}, (_, i) => `images/chapter9/${String(i + 96).padStart(3, '0')}risograph.png`);
+    const sequence3 = Array.from({length: 6}, (_, i) => `images/chapter10/${String(i + 104).padStart(3, '0')}risograph.png`);
+    const sequence4 = Array.from({length: 5}, (_, i) => `images/chapter11/${String(i + 110).padStart(3, '0')}risograph.png`);
 
+    const sequences = [sequence1, sequence2, sequence3, sequence4];
+
+    let currentSequenceIndex = 0;
     let intervalIndex = 0;
     let intervalTimer;
 
     function showIntervalImage() {
-      intervalImage.src = intervalImages[intervalIndex];
-      intervalIndex++;
-      if (intervalIndex >= intervalImages.length) {
+      const currentSequence = sequences[currentSequenceIndex];
+
+      if (intervalIndex < currentSequence.length) {
+        if (intervalIndex === 0) {
+          // Fade in only at the start of a new sequence
+          intervalImage.style.opacity = 0;
+          setTimeout(() => {
+            intervalImage.src = currentSequence[intervalIndex];
+            intervalImage.onload = () => {
+              intervalImage.style.opacity = 1;
+            };
+            intervalIndex++;
+          }, 180); // wait for fade to start before loading the next image
+        } else {
+          intervalImage.src = currentSequence[intervalIndex];
+          intervalIndex++;
+        }
+      } else {
         clearInterval(intervalTimer);
-        finalBtn.style.display = "block"; // show final button
+        currentSequenceIndex++;
+
+        if (currentSequenceIndex < sequences.length) {
+          intervalIndex = 0;
+          // Wait a bit before starting the next sequence (with fade effect)
+          setTimeout(() => {
+            intervalTimer = setInterval(showIntervalImage, 180); // 155ms interval to change images
+          }, 250);
+        } else {
+          setTimeout(() => {
+            finalBtn.style.display = "block"; // show final button after all sequences
+          }, 500);
+        }
       }
     }
 
     function startImageInterval() {
       intervalContainer.style.display = 'flex';
-      showIntervalImage();
-      intervalTimer = setInterval(showIntervalImage, 250);
+      intervalTimer = setInterval(showIntervalImage, 180); // 155ms interval for image changes
     }
 
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('autoplay') === 'true') {
       startImageInterval();
     }
-
-    finalBtn.addEventListener('click', function () {
-      alert("End of Chapter 4!");
-      // or route somewhere else
-    });
   </script>
 
 </body>
