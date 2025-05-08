@@ -32,7 +32,6 @@
       object-fit: cover;
     }
 
-    /* Polaroid Button Style */
     #polaroidBtn2 {
       position: absolute;
       top: 0;
@@ -40,11 +39,31 @@
       z-index: 9;
       width: 100vw;
       height: 100vh;
-      display: none;  /* Initially hidden */
+      display: none;
+    }
+
+    /* Cinematic black overlay */
+    #blackOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      z-index: 9999;
+      animation: fadeIn 2s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Cinematic fade-in overlay -->
+  <div id="blackOverlay"></div>
 
   <!-- Interval Autoplay Container -->
   <div class="interval-container" id="intervalContainer">
@@ -57,7 +76,6 @@
     const intervalImage = document.getElementById("intervalImage");
     const polaroidBtn2 = document.getElementById("polaroidBtn2");
 
-    // Image sources for interval 67-78
     const intervalImages = [];
     for (let i = 67; i <= 78; i++) {
       const paddedId = String(i).padStart(3, '0');
@@ -72,7 +90,7 @@
       intervalIndex++;
       if (intervalIndex >= intervalImages.length) {
         clearInterval(intervalTimer);
-        polaroidBtn2.style.display = "block"; // Show New Button after last image
+        polaroidBtn2.style.display = "block";
       }
     }
 
@@ -82,15 +100,21 @@
       intervalTimer = setInterval(showIntervalImage, 180);
     }
 
-    // Start autoplay if 'autoplay=true' parameter is present
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('autoplay') === 'true') {
       startImageInterval();
     }
 
-    // Polaroid Button 2 click event
     polaroidBtn2.addEventListener('click', function () {
       window.location.href = 'chapter4.html?autoplay=true';
+    });
+
+    // Remove cinematic overlay after fade
+    window.addEventListener("load", () => {
+      const overlay = document.getElementById("blackOverlay");
+      setTimeout(() => {
+        overlay.remove();
+      }, 2000);
     });
   </script>
 

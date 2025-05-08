@@ -16,6 +16,7 @@
       padding: 0;
       height: 100%;
       overflow: hidden;
+      background: black;
     }
 
     .scroll-container {
@@ -57,9 +58,29 @@
       height: 100vh;
       display: none;
     }
+
+    /* Cinematic fade-in overlay */
+    #blackOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      z-index: 9999;
+      animation: fadeIn 2s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- Cinematic fade-in overlay -->
+  <div id="blackOverlay"></div>
 
   <!-- Horizontal Scroll Images 42–46 -->
   <div class="scroll-container" id="scrollContainer">
@@ -76,13 +97,11 @@
     <img src="images/polaroid/polaroid1.png" alt="Polaroid" id="polaroidBtn">
   </div>
 
-
   <script>
     const scrollContainer = document.getElementById("scrollContainer");
     const intervalContainer = document.getElementById("intervalContainer");
     const intervalImage = document.getElementById("intervalImage");
     const polaroidBtn = document.getElementById("polaroidBtn");
-
 
     const intervalImages = [];
     for (let i = 47; i <= 66; i++) {
@@ -120,6 +139,14 @@
     // button leads to next chapter
     polaroidBtn.addEventListener('click', function () {
       window.location.href = 'chapter3.html?autoplay=true';
+    });
+
+    // Remove overlay after fade-in animation
+    window.addEventListener("load", () => {
+      const overlay = document.getElementById("blackOverlay");
+      setTimeout(() => {
+        overlay.remove();
+      }, 2000); // Matches fadeIn duration
     });
   </script>
 
