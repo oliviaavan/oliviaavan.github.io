@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>Chapter 3</title>
+
   <style>
     * {
       box-sizing: border-box;
@@ -40,9 +43,9 @@
       width: 100vw;
       height: 100vh;
       display: none;
+      object-fit: cover;
     }
 
-    /* Cinematic black overlay */
     #blackOverlay {
       position: fixed;
       top: 0;
@@ -60,12 +63,10 @@
     }
   </style>
 </head>
-<body>
 
-  <!-- Cinematic fade-in overlay -->
+<body>
   <div id="blackOverlay"></div>
 
-  <!-- Interval Autoplay Container -->
   <div class="interval-container" id="intervalContainer">
     <img id="intervalImage" src="" alt="Chapter 5 Image">
     <img src="images/polaroid/polaroid2.png" alt="Polaroid 2" id="polaroidBtn2">
@@ -109,7 +110,7 @@
       window.location.href = 'chapter4.html?autoplay=true';
     });
 
-    // Remove cinematic overlay after fade
+    // remove cinematic overlay after fade
     window.addEventListener("load", () => {
       const overlay = document.getElementById("blackOverlay");
       setTimeout(() => {
@@ -117,6 +118,6 @@
       }, 2000);
     });
   </script>
-
 </body>
+
 </html>

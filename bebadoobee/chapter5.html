@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>Chapter 5</title>
+
   <style>
     body {
       margin: 0;
@@ -42,9 +45,8 @@
     }
   </style>
 </head>
-<body>
 
-  <!-- Cinematic fade-in overlay -->
+<body>
   <div id="blackOverlay"></div>
 
   <div class="image-container">
@@ -71,7 +73,7 @@
         }
         setTimeout(playFirstSequence, intervalTime);
       } else {
-        setTimeout(transitionToSecondSequence, 500); // Delay transition before second sequence
+        setTimeout(transitionToSecondSequence, 500); // delays transition before second sequence
       }
     }
 
@@ -80,15 +82,15 @@
     const secondInterval = 160;
 
     function transitionToSecondSequence() {
-      // Fade-out the current image
+      // fades out current image
       imageElement.style.opacity = 0;
 
-      // After the fade-out transition ends, start the second sequence
-      setTimeout(playSecondSequence, 1000); // Wait for the fade-out to complete
+      // after fade out ends, start  second sequence
+      setTimeout(playSecondSequence, 1000); // wait for the fade out to finish
     }
 
     function playSecondSequence() {
-      // Reset opacity back to 1 for second sequence
+      // resets opacity back to 1 for second sequence
       imageElement.style.opacity = 1;
       
       secondImageIndex++;
@@ -103,7 +105,7 @@
 
     setTimeout(playFirstSequence, intervalTime);
 
-    // Remove cinematic overlay after fade
+    // remove cinematic overlay after fade
     window.addEventListener("load", () => {
       const overlay = document.getElementById("blackOverlay");
       setTimeout(() => {
@@ -111,6 +113,6 @@
       }, 2000);
     });
   </script>
-
 </body>
+
 </html>

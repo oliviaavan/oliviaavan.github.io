@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 
   <title>Chapter 2</title>
+
   <style>
     * {
       box-sizing: border-box;
@@ -59,7 +61,6 @@
       display: none;
     }
 
-    /* Cinematic fade-in overlay */
     #blackOverlay {
       position: fixed;
       top: 0;
@@ -77,12 +78,10 @@
     }
   </style>
 </head>
-<body>
 
-  <!-- Cinematic fade-in overlay -->
+<body>
   <div id="blackOverlay"></div>
 
-  <!-- Horizontal Scroll Images 42–46 -->
   <div class="scroll-container" id="scrollContainer">
     <img src="images/chapter3/042risograph.png" alt="Image 42" class="scroll-image">
     <img src="images/chapter3/043risograph.png" alt="Image 43" class="scroll-image">
@@ -141,14 +140,14 @@
       window.location.href = 'chapter3.html?autoplay=true';
     });
 
-    // Remove overlay after fade-in animation
+    // remove overlay after fade in
     window.addEventListener("load", () => {
       const overlay = document.getElementById("blackOverlay");
       setTimeout(() => {
         overlay.remove();
-      }, 2000); // Matches fadeIn duration
+      }, 2000);
     });
   </script>
-
 </body>
+
 </html>

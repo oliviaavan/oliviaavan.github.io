@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
 
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -37,26 +37,26 @@
       object-fit: cover;
     }
 
-    .control-btn {
+    .leave-btn {
       position: absolute;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(255, 255, 255, 0.8);
-      color: #000;
+      top: 10%;
+      left: 50%;
+      z-index: 9;
+      padding: 20px 40px;
+      font-size: 1.5rem;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
       border: none;
-      padding: 12px 20px;
-      font-size: 1rem;
+      border-radius: 8px;
       cursor: pointer;
-      border-radius: 6px;
-      z-index: 10;
       display: none;
+      transform: translate(-50%, -50%);
     }
 
-    .control-btn:hover {
-      background: rgba(255, 255, 255, 1);
+    .leave-btn:hover {
+      background: rgba(0, 0, 0, 0.9);
     }
 
-    /* Cinematic black overlay */
     #blackOverlay {
       position: fixed;
       top: 0;
@@ -73,17 +73,14 @@
       100% { opacity: 0; visibility: hidden; }
     }
   </style>
-
 </head>
 
 <body>
-
-  <!-- Cinematic fade-in overlay -->
   <div id="blackOverlay"></div>
 
   <div class="carousel-container">
     <img id="carousel" src="" alt="Carousel Image">
-    <button id="continueBtn" class="control-btn">Leave the train station</button>
+    <button id="leaveBtn" class="leave-btn">leave the train station</button>
   </div>
 
   <script>
@@ -94,7 +91,7 @@
     }
 
     const carousel = document.getElementById("carousel");
-    const continueBtn = document.getElementById("continueBtn");
+    const leaveBtn = document.getElementById("leaveBtn");
 
     let currentIndex = 0;
     let autoplayInterval = null;
@@ -110,7 +107,7 @@
       currentIndex++;
       if (currentIndex === 27) {
         stopAutoplay();
-        continueBtn.style.display = "block";
+        leaveBtn.style.display = "block";
       } else if (currentIndex < images.length) {
         showImage(currentIndex);
       }
@@ -148,8 +145,8 @@
     showImage(currentIndex);
     startAutoplay();
 
-    continueBtn.addEventListener("click", () => {
-      continueBtn.style.display = "none";
+    leaveBtn.addEventListener("click", () => {
+      leaveBtn.style.display = "none";
       startAutoplay();
       loopChapter2();
     });
@@ -162,6 +159,6 @@
       }, 2000);
     });
   </script>
-  
 </body>
+
 </html>
