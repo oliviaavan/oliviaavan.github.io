@@ -12,6 +12,7 @@
       margin: 0;
       background: black;
     }
+
     .image-container {
       width: 100vw;
       height: 100vh;
@@ -20,6 +21,7 @@
       align-items: center;
       position: relative;
     }
+
     .image-container img {
       width: 100vw;
       height: 100vh;
@@ -51,8 +53,6 @@
         transform: translateX(-50%) scale(1.05);
     }
 
-
-    /* Cinematic black overlay */
     #blackOverlay {
       position: fixed;
       top: 0;
@@ -84,7 +84,6 @@
     let buffer = null;
     let source = null;
 
-    // Load and decode
     fetch('audio/disappearchapter5.wav')
       .then(response => response.arrayBuffer())
       .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
@@ -93,7 +92,6 @@
         console.log('Audio loaded. Duration: ' + buffer.duration + 's');
       });
 
-    // Play audio on first user interaction
     document.body.addEventListener('click', function startAudio() {
       if (!buffer) {
         console.log('Buffer still loading...');
@@ -134,7 +132,7 @@
         }
         setTimeout(playFirstSequence, intervalTime);
       } else {
-        setTimeout(transitionToSecondSequence, 500); // delays transition before second sequence
+        setTimeout(transitionToSecondSequence, 500); 
       }
     }
 
@@ -143,15 +141,11 @@
     const secondInterval = 160;
 
     function transitionToSecondSequence() {
-      // fades out current image
       imageElement.style.opacity = 0;
-
-      // after fade out ends, start  second sequence
       setTimeout(playSecondSequence, 1000); // wait for the fade out to finish
     }
 
     function playSecondSequence() {
-      // resets opacity back to 1 for second sequence
       imageElement.style.opacity = 1;
       
       secondImageIndex++;
@@ -166,7 +160,6 @@
 
     setTimeout(playFirstSequence, intervalTime);
 
-    // remove cinematic overlay after fade
     window.addEventListener("load", () => {
       const overlay = document.getElementById("blackOverlay");
       setTimeout(() => {

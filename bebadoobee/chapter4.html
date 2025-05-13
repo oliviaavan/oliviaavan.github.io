@@ -67,7 +67,6 @@
     let buffer = null;
     let source = null;
 
-    // Load and decode
     fetch('audio/disappearchapter4.wav')
       .then(response => response.arrayBuffer())
       .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
@@ -76,7 +75,6 @@
         console.log('Audio loaded. Duration: ' + buffer.duration + 's');
       });
 
-    // Play audio on first user interaction
     document.body.addEventListener('click', function startAudio() {
       if (!buffer) {
         console.log('Buffer still loading...');
@@ -91,8 +89,8 @@
       source = audioContext.createBufferSource();
       source.buffer = buffer;
       source.loop = true;
-      source.loopStart = 0; // Ensure it starts from sample 0
-      source.loopEnd = buffer.duration; // Ensure it loops exactly to end of buffer
+      source.loopStart = 0; 
+      source.loopEnd = buffer.duration; 
 
       source.connect(audioContext.destination);
       source.start(0);
@@ -105,7 +103,6 @@
     const intervalImage = document.getElementById("intervalImage");
     const finalBtn = document.getElementById("finalBtn");
 
-    // Define all four sequences
     const sequence1 = Array.from({length: 8}, (_, i) => `images/chapter9/${String(i + 96).padStart(3, '0')}risograph.png`);
     const sequence2 = Array.from({length: 11}, (_, i) => `images/chapter8/${String(i + 85).padStart(3, '0')}risograph.png`);
     const sequence3 = Array.from({length: 6}, (_, i) => `images/chapter10/${String(i + 104).padStart(3, '0')}risograph.png`);
@@ -122,7 +119,6 @@
 
       if (intervalIndex < currentSequence.length) {
         if (intervalIndex === 0) {
-          // Fade in only at the start of a new sequence
           intervalImage.style.opacity = 0;
           setTimeout(() => {
             intervalImage.src = currentSequence[intervalIndex];
@@ -141,9 +137,8 @@
 
         if (currentSequenceIndex < sequences.length) {
           intervalIndex = 0;
-          // Wait a bit before starting the next sequence (with fade effect)
           setTimeout(() => {
-            intervalTimer = setInterval(showIntervalImage, 180); // 155ms interval to change images
+            intervalTimer = setInterval(showIntervalImage, 180);
           }, 250);
         } else {
           setTimeout(() => {
@@ -155,7 +150,7 @@
 
     function startImageInterval() {
       intervalContainer.style.display = 'flex';
-      intervalTimer = setInterval(showIntervalImage, 180); // 155ms interval for image changes
+      intervalTimer = setInterval(showIntervalImage, 180);
     }
 
     const urlParams = new URLSearchParams(window.location.search);
