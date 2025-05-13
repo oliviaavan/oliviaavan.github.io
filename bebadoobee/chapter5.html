@@ -27,6 +27,31 @@
       transition: opacity 1s ease-out; /* Fade transition */
     }
 
+    #startOverBtn {
+        position: absolute;
+        bottom: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: white;
+        color: black;
+        border: none;
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        display: none;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        transition: background 0.3s, transform 0.3s;
+    }
+
+    #startOverBtn:hover {
+        background-color: #ddd;
+        transform: translateX(-50%) scale(1.05);
+    }
+
+
     /* Cinematic black overlay */
     #blackOverlay {
       position: fixed;
@@ -51,6 +76,7 @@
 
   <div class="image-container">
     <img id="image-display" src="images/chapter12/116risograph.png" alt="Sequence" />
+    <button id="startOverBtn">Start Over</button>
   </div>
 
   <script>
