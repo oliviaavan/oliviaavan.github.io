@@ -63,6 +63,44 @@
   </div>
 
   <script>
+    let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    let buffer = null;
+    let source = null;
+
+    // Load and decode
+    fetch('audio/disappearchapter4.wav')
+      .then(response => response.arrayBuffer())
+      .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+      .then(decodedBuffer => {
+        buffer = decodedBuffer;
+        console.log('Audio loaded. Duration: ' + buffer.duration + 's');
+      });
+
+    // Play audio on first user interaction
+    document.body.addEventListener('click', function startAudio() {
+      if (!buffer) {
+        console.log('Buffer still loading...');
+        return;
+      }
+
+      if (source) {
+        console.log('Already playing.');
+        return;
+      }
+
+      source = audioContext.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+      source.loopStart = 0; // Ensure it starts from sample 0
+      source.loopEnd = buffer.duration; // Ensure it loops exactly to end of buffer
+
+      source.connect(audioContext.destination);
+      source.start(0);
+
+      document.body.removeEventListener('click', startAudio);
+      console.log('Audio started with loopStart 0 and loopEnd ' + buffer.duration);
+    });
+
     const intervalContainer = document.getElementById("intervalContainer");
     const intervalImage = document.getElementById("intervalImage");
     const finalBtn = document.getElementById("finalBtn");

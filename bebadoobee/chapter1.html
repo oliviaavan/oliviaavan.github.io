@@ -5,9 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-
   <title>Chapter 1</title>
-
   <style>
     * {
       box-sizing: border-box;
@@ -84,6 +82,45 @@
   </div>
 
   <script>
+    let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    let buffer = null;
+    let source = null;
+
+    // Load and decode
+    fetch('audio/disappearchapter1.wav')
+      .then(response => response.arrayBuffer())
+      .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+      .then(decodedBuffer => {
+        buffer = decodedBuffer;
+        console.log('Audio loaded. Duration: ' + buffer.duration + 's');
+      });
+
+    // Play audio on first user interaction
+    document.body.addEventListener('click', function startAudio() {
+      if (!buffer) {
+        console.log('Buffer still loading...');
+        return;
+      }
+
+      if (source) {
+        console.log('Already playing.');
+        return;
+      }
+
+      source = audioContext.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+      source.loopStart = 0; // Ensure it starts from sample 0
+      source.loopEnd = buffer.duration; // Ensure it loops exactly to end of buffer
+
+      source.connect(audioContext.destination);
+      source.start(0);
+
+      document.body.removeEventListener('click', startAudio);
+      console.log('Audio started with loopStart 0 and loopEnd ' + buffer.duration);
+    });
+
+    // === Your carousel code ===
     const images = [];
     for (let i = 1; i <= 33; i++) {
       const paddedId = String(i).padStart(3, '0');
@@ -151,7 +188,6 @@
       loopChapter2();
     });
 
-    // Remove black overlay after fade
     window.addEventListener("load", () => {
       const overlay = document.getElementById("blackOverlay");
       setTimeout(() => {
