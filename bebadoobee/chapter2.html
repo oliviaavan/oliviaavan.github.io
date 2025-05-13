@@ -158,12 +158,17 @@
       }
     }
 
+
     function startImageInterval() {
       scrollContainer.style.display = 'none';
       intervalContainer.style.display = 'flex';
-      showIntervalImage();
+      
+      intervalImage.src = intervalImages[intervalIndex];
+      intervalIndex++;
       intervalTimer = setInterval(showIntervalImage, 155);
     }
+
+
 
     // end of horizontal scroll
     scrollContainer.addEventListener('scroll', () => {
