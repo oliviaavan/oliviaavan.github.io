@@ -29,30 +29,6 @@
       transition: opacity 1s ease-out; /* Fade transition */
     }
 
-    #startOverBtn {
-        position: absolute;
-        bottom: 10%;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: white;
-        color: black;
-        border: none;
-        border-radius: 50%;
-        width: 120px;
-        height: 120px;
-        font-size: 1rem;
-        font-weight: bold;
-        cursor: pointer;
-        display: none;
-        box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        transition: background 0.3s, transform 0.3s;
-    }
-
-    #startOverBtn:hover {
-        background-color: #ddd;
-        transform: translateX(-50%) scale(1.05);
-    }
-
     #blackOverlay {
       position: fixed;
       top: 0;
@@ -76,27 +52,42 @@
 
   <div class="image-container">
     <img id="image-display" src="images/chapter12/116risograph.png" alt="Sequence" />
-    <button id="startOverBtn">Start Over</button>
   </div>
 
   <script>
-    let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    let buffer = null;
-    let source = null;
+  let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  let buffer = null, source = null;
 
-    fetch('audio/disappearchapter5.wav')
-      .then(response => response.arrayBuffer())
-      .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-      .then(decodedBuffer => {
-        buffer = decodedBuffer;
-        console.log('Audio loaded. Duration: ' + buffer.duration + 's');
-      });
+  function startPlayback() {
+    if (!buffer || source) return;
+    source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
+    source.loopStart = 0;
+    source.loopEnd = buffer.duration;
+    source.connect(audioContext.destination);
+    audioContext.resume().then(() => source.start(0));
+    console.log('Chapter 5 audio started.');
+  }
 
-    document.body.addEventListener('click', function startAudio() {
-      if (!buffer) {
-        console.log('Buffer still loading...');
-        return;
+  // 1) load & decode
+  fetch('audio/disappearchapter5.wav')
+    .then(r => r.arrayBuffer())
+    .then(a => audioContext.decodeAudioData(a))
+    .then(decoded => {
+      buffer = decoded;
+      console.log('Audio loaded. Duration: ' + buffer.duration + 's');
+
+      // 2) if we came from Chapter 4’s button, autoplay now
+      if (sessionStorage.getItem('playChapter5Audio') === 'true') {
+        sessionStorage.removeItem('playChapter5Audio');
+        startPlayback();
       }
+    });
+
+  // 3) fallback: manual start on click
+  document.body.addEventListener('click', () => {
+    startPlayback();
 
       if (source) {
         console.log('Already playing.');

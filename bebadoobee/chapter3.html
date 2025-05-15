@@ -73,86 +73,94 @@
   </div>
 
   <script>
-    let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    let buffer = null;
-    let source = null;
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  let audioBuffer = null, audioSource = null;
 
-    fetch('audio/disappearchapter3.wav')
-      .then(response => response.arrayBuffer())
-      .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-      .then(decodedBuffer => {
-        buffer = decodedBuffer;
-        console.log('Audio loaded. Duration: ' + buffer.duration + 's');
-      });
+  function startPlayback() {
+    if (!audioBuffer || audioSource) return;
+    audioSource = audioContext.createBufferSource();
+    audioSource.buffer = audioBuffer;
+    audioSource.loop = true;
+    audioSource.connect(audioContext.destination);
+    audioContext.resume().then(() => {
+      audioSource.start(0);
+      console.log('Chapter 3 audio started.');
+    });
+  }
 
-    document.body.addEventListener('click', function startAudio() {
-      if (!buffer) {
-        console.log('Buffer still loading...');
-        return;
+  fetch('audio/disappearchapter3.wav')
+    .then(r => r.arrayBuffer())
+    .then(arr => audioContext.decodeAudioData(arr))
+    .then(buf => {
+      audioBuffer = buf;
+      console.log('Audio decoded (duration=' + buf.duration + 's).');
+
+      // if we came straight from Ch 2’s Polaroid click…
+      if (sessionStorage.getItem('playChapter3Audio') === 'true') {
+        sessionStorage.removeItem('playChapter3Audio');
+        startPlayback();
+        startImageInterval();   // ← also kick off the visuals
       }
-
-      if (source) {
-        console.log('Already playing.');
-        return;
-      }
-
-      source = audioContext.createBufferSource();
-      source.buffer = buffer;
-      source.loop = true;
-      source.loopStart = 0; 
-      source.loopEnd = buffer.duration; 
-
-      source.connect(audioContext.destination);
-      source.start(0);
-
-      document.body.removeEventListener('click', startAudio);
-      console.log('Audio started with loopStart 0 and loopEnd ' + buffer.duration);
     });
 
-    const intervalContainer = document.getElementById("intervalContainer");
-    const intervalImage = document.getElementById("intervalImage");
-    const polaroidBtn2 = document.getElementById("polaroidBtn2");
+  // manual audio‐fallback on first click
+  document.body.addEventListener('click', function once() {
+    startPlayback();
+    document.body.removeEventListener('click', once);
+  });
 
-    const intervalImages = [];
-    for (let i = 67; i <= 78; i++) {
-      const paddedId = String(i).padStart(3, '0');
-      intervalImages.push(`images/chapter5/${paddedId}risograph.png`);
+
+  // ——————————————————————————————
+  // 2) IMAGE‐SEQUENCE SETUP
+  // ——————————————————————————————
+  const intervalContainer = document.getElementById('intervalContainer');
+  const intervalImage     = document.getElementById('intervalImage');
+  const polaroidBtn2      = document.getElementById('polaroidBtn2');
+
+  // build your risograph sequence
+  const intervalImages = [];
+  for (let i = 67; i <= 78; i++) {
+    intervalImages.push(`images/chapter5/${String(i).padStart(3,'0')}risograph.png`);
+  }
+
+  let idx = 0, timer;
+
+  function showNextImage() {
+    if (idx < intervalImages.length) {
+      intervalImage.src = intervalImages[idx++];
+    } else {
+      clearInterval(timer);
+      polaroidBtn2.style.display = 'block';
     }
+  }
 
-    let intervalIndex = 0;
-    let intervalTimer;
+  function startImageInterval() {
+    intervalContainer.style.display = 'flex';
+    showNextImage();
+    timer = setInterval(showNextImage, 180);
+  }
 
-    function showIntervalImage() {
-      intervalImage.src = intervalImages[intervalIndex];
-      intervalIndex++;
-      if (intervalIndex >= intervalImages.length) {
-        clearInterval(intervalTimer);
-        polaroidBtn2.style.display = "block";
-      }
-    }
 
-    function startImageInterval() {
-      intervalContainer.style.display = 'flex';
-      showIntervalImage();
-      intervalTimer = setInterval(showIntervalImage, 180);
-    }
+  // ——————————————————————————————
+  // 3) POLAROID → CHAPTER 4
+  // ——————————————————————————————
+  polaroidBtn2.addEventListener('click', () => {
+    sessionStorage.setItem('playChapter4Audio', 'true');
+    window.location.href = 'chapter4.html';
+  });
 
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('autoplay') === 'true') {
-      startImageInterval();
-    }
 
-    polaroidBtn2.addEventListener('click', function () {
-      window.location.href = 'chapter4.html?autoplay=true';
-    });
-
-    // remove cinematic overlay after fade
-    window.addEventListener("load", () => {
-      const overlay = document.getElementById("blackOverlay");
-      setTimeout(() => {
-        overlay.remove();
-      }, 2000);
-    });
+  // ——————————————————————————————
+  // 4) CINEMATIC BLACK OVERLAY
+  // ——————————————————————————————
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('blackOverlay').remove();
+      // if user never clicked Polaroid, we can still show the sequence 
+      // once the fade is done—optional!
+      if (!audioSource) startImageInterval();
+    }, 2000);
+  });
   </script>
 </body>
 

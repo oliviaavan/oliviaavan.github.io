@@ -65,7 +65,9 @@
 
   <script>
     function startChapter() {
-      document.body.innerHTML = "";
+      // remember that we got a user gesture
+      sessionStorage.setItem('playAudio', 'true');
+      // now go to chapter1
       window.location.href = "chapter1.html";
     }
   </script>

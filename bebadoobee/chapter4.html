@@ -59,104 +59,99 @@
 <body>
   <div class="interval-container" id="intervalContainer">
     <img id="intervalImage" src="" alt="Chapter 4 Image">
-    <button id="finalBtn" onclick="location.href='chapter5.html'">snap back to reality</button>
+
+    <button
+    id="finalBtn"
+    onclick="
+      sessionStorage.setItem('playChapter5Audio','true');
+      location.href='chapter5.html';
+    "
+  >snap back to reality</button>
   </div>
 
   <script>
-    let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    let buffer = null;
-    let source = null;
+  let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  let buffer = null;
+  let source = null;
 
-    fetch('audio/disappearchapter4.wav')
-      .then(response => response.arrayBuffer())
-      .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-      .then(decodedBuffer => {
-        buffer = decodedBuffer;
-        console.log('Audio loaded. Duration: ' + buffer.duration + 's');
-      });
+  function startChapter4Audio() {
+    if (!buffer || source) return;
+    source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
+    source.loopStart = 0;
+    source.loopEnd = buffer.duration;
+    source.connect(audioContext.destination);
+    source.start(0);
+    console.log('Chapter 4 audio started.');
+  }
 
-    document.body.addEventListener('click', function startAudio() {
-      if (!buffer) {
-        console.log('Buffer still loading...');
-        return;
+  // load audio buffer
+  fetch('audio/disappearchapter4.wav')
+    .then(r => r.arrayBuffer())
+    .then(arr => audioContext.decodeAudioData(arr))
+    .then(decoded => {
+      buffer = decoded;
+      console.log('Audio loaded. Duration:', buffer.duration);
+      // if we came straight from Chapter 3’s Polaroid…
+      if (sessionStorage.getItem('playChapter4Audio') === 'true') {
+        sessionStorage.removeItem('playChapter4Audio');
+        startChapter4Audio();
+        startImageInterval();
       }
-
-      if (source) {
-        console.log('Already playing.');
-        return;
-      }
-
-      source = audioContext.createBufferSource();
-      source.buffer = buffer;
-      source.loop = true;
-      source.loopStart = 0; 
-      source.loopEnd = buffer.duration; 
-
-      source.connect(audioContext.destination);
-      source.start(0);
-
-      document.body.removeEventListener('click', startAudio);
-      console.log('Audio started with loopStart 0 and loopEnd ' + buffer.duration);
     });
 
-    const intervalContainer = document.getElementById("intervalContainer");
-    const intervalImage = document.getElementById("intervalImage");
-    const finalBtn = document.getElementById("finalBtn");
+  // keep the manual-fallback click handler too
+  document.body.addEventListener('click', function onFirstClick() {
+    startChapter4Audio();
+    document.body.removeEventListener('click', onFirstClick);
+  });
 
-    const sequence1 = Array.from({length: 8}, (_, i) => `images/chapter9/${String(i + 96).padStart(3, '0')}risograph.png`);
-    const sequence2 = Array.from({length: 11}, (_, i) => `images/chapter8/${String(i + 85).padStart(3, '0')}risograph.png`);
-    const sequence3 = Array.from({length: 6}, (_, i) => `images/chapter10/${String(i + 104).padStart(3, '0')}risograph.png`);
-    const sequence4 = Array.from({length: 5}, (_, i) => `images/chapter11/${String(i + 110).padStart(3, '0')}risograph.png`);
+  // — image sequence setup (unchanged) —
+  const intervalContainer = document.getElementById("intervalContainer");
+  const intervalImage     = document.getElementById("intervalImage");
+  const finalBtn          = document.getElementById("finalBtn");
 
-    const sequences = [sequence1, sequence2, sequence3, sequence4];
+  const sequence1 = Array.from({length: 8}, (_, i) => `images/chapter9/${String(i + 96).padStart(3, '0')}risograph.png`);
+  const sequence2 = Array.from({length: 11}, (_, i) => `images/chapter8/${String(i + 85).padStart(3, '0')}risograph.png`);
+  const sequence3 = Array.from({length: 6}, (_, i) => `images/chapter10/${String(i + 104).padStart(3, '0')}risograph.png`);
+  const sequence4 = Array.from({length: 5}, (_, i) => `images/chapter11/${String(i + 110).padStart(3, '0')}risograph.png`);
+  const sequences = [sequence1, sequence2, sequence3, sequence4];
+  let currentSeqIdx = 0, imgIdx = 0, intervalTimer;
 
-    let currentSequenceIndex = 0;
-    let intervalIndex = 0;
-    let intervalTimer;
-
-    function showIntervalImage() {
-      const currentSequence = sequences[currentSequenceIndex];
-
-      if (intervalIndex < currentSequence.length) {
-        if (intervalIndex === 0) {
-          intervalImage.style.opacity = 0;
-          setTimeout(() => {
-            intervalImage.src = currentSequence[intervalIndex];
-            intervalImage.onload = () => {
-              intervalImage.style.opacity = 1;
-            };
-            intervalIndex++;
-          }, 180); // wait for fade to start before loading the next image
-        } else {
-          intervalImage.src = currentSequence[intervalIndex];
-          intervalIndex++;
-        }
+  function showIntervalImage() {
+    const seq = sequences[currentSeqIdx];
+    if (imgIdx < seq.length) {
+      if (imgIdx === 0) {
+        intervalImage.style.opacity = 0;
+        setTimeout(() => {
+          intervalImage.src = seq[imgIdx++];
+          intervalImage.onload = () => intervalImage.style.opacity = 1;
+        }, 180);
       } else {
-        clearInterval(intervalTimer);
-        currentSequenceIndex++;
-
-        if (currentSequenceIndex < sequences.length) {
-          intervalIndex = 0;
-          setTimeout(() => {
-            intervalTimer = setInterval(showIntervalImage, 180);
-          }, 250);
-        } else {
-          setTimeout(() => {
-            finalBtn.style.display = "block"; // show final button after all sequences
-          }, 500);
-        }
+        intervalImage.src = seq[imgIdx++];
+      }
+    } else {
+      clearInterval(intervalTimer);
+      currentSeqIdx++;
+      if (currentSeqIdx < sequences.length) {
+        imgIdx = 0;
+        setTimeout(() => intervalTimer = setInterval(showIntervalImage, 180), 250);
+      } else {
+        setTimeout(() => finalBtn.style.display = 'block', 500);
       }
     }
+  }
 
-    function startImageInterval() {
-      intervalContainer.style.display = 'flex';
-      intervalTimer = setInterval(showIntervalImage, 180);
-    }
+  function startImageInterval() {
+    intervalContainer.style.display = 'flex';
+    intervalTimer = setInterval(showIntervalImage, 180);
+  }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('autoplay') === 'true') {
-      startImageInterval();
-    }
+  finalBtn.addEventListener('click', () => {
+    sessionStorage.setItem('playChapter5Audio','true');
+    window.location.href = 'chapter5.html';
+  });
   </script>
 </body>
 

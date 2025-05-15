@@ -101,36 +101,40 @@
     let buffer = null;
     let source = null;
 
-    fetch('audio/disappearchapter2.wav')
-      .then(response => response.arrayBuffer())
-      .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-      .then(decodedBuffer => {
-        buffer = decodedBuffer;
-        console.log('Audio loaded. Duration: ' + buffer.duration + 's');
-      });
-
-    document.body.addEventListener('click', function startAudio() {
-      if (!buffer) {
-        console.log('Buffer still loading...');
-        return;
-      }
-
-      if (source) {
-        console.log('Already playing.');
-        return;
-      }
-
+    // 1) helper to actually start the looped audio
+    function startPlayback() {
+      if (!buffer || source) return;
       source = audioContext.createBufferSource();
       source.buffer = buffer;
       source.loop = true;
       source.loopStart = 0;
-      source.loopEnd = buffer.duration; 
-
+      source.loopEnd = buffer.duration;
       source.connect(audioContext.destination);
-      source.start(0);
+      audioContext.resume().then(() => {
+        source.start(0);
+        console.log('Chapter 2 audio started.');
+      });
+    }
 
-      document.body.removeEventListener('click', startAudio);
-      console.log('Audio started with loopStart 0 and loopEnd ' + buffer.duration);
+    // 2) load & decode
+    fetch('audio/disappearchapter2.wav')
+      .then(r => r.arrayBuffer())
+      .then(a => audioContext.decodeAudioData(a))
+      .then(decodedBuffer => {
+        buffer = decodedBuffer;
+        console.log('Audio loaded. Duration: ' + buffer.duration + 's');
+
+        // if we came from Chapter 1’s button, autoplay
+        if (sessionStorage.getItem('playChapter2Audio') === 'true') {
+          sessionStorage.removeItem('playChapter2Audio');
+          startPlayback();
+        }
+      });
+
+    // 3) maintain your old “click anywhere” fallback
+    document.body.addEventListener('click', function onBodyClick() {
+      startPlayback();
+      if (source) document.body.removeEventListener('click', onBodyClick);
     });
 
     const scrollContainer = document.getElementById("scrollContainer");
@@ -173,7 +177,9 @@
     });
 
     polaroidBtn.addEventListener('click', function () {
-      window.location.href = 'chapter3.html?autoplay=true';
+      // remember to autoplay Chapter 3’s audio
+      sessionStorage.setItem('playChapter3Audio', 'true');
+      window.location.href = 'chapter3.html';
     });
 
     // remove overlay after fade in
