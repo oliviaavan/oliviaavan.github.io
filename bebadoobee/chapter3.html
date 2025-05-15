@@ -95,29 +95,22 @@
       audioBuffer = buf;
       console.log('Audio decoded (duration=' + buf.duration + 's).');
 
-      // if we came straight from Ch 2’s Polaroid click…
       if (sessionStorage.getItem('playChapter3Audio') === 'true') {
         sessionStorage.removeItem('playChapter3Audio');
         startPlayback();
-        startImageInterval();   // ← also kick off the visuals
+        startImageInterval();  
       }
     });
 
-  // manual audio‐fallback on first click
   document.body.addEventListener('click', function once() {
     startPlayback();
     document.body.removeEventListener('click', once);
   });
 
-
-  // ——————————————————————————————
-  // 2) IMAGE‐SEQUENCE SETUP
-  // ——————————————————————————————
   const intervalContainer = document.getElementById('intervalContainer');
   const intervalImage     = document.getElementById('intervalImage');
   const polaroidBtn2      = document.getElementById('polaroidBtn2');
 
-  // build your risograph sequence
   const intervalImages = [];
   for (let i = 67; i <= 78; i++) {
     intervalImages.push(`images/chapter5/${String(i).padStart(3,'0')}risograph.png`);
@@ -140,24 +133,14 @@
     timer = setInterval(showNextImage, 180);
   }
 
-
-  // ——————————————————————————————
-  // 3) POLAROID → CHAPTER 4
-  // ——————————————————————————————
   polaroidBtn2.addEventListener('click', () => {
     sessionStorage.setItem('playChapter4Audio', 'true');
     window.location.href = 'chapter4.html';
   });
 
-
-  // ——————————————————————————————
-  // 4) CINEMATIC BLACK OVERLAY
-  // ——————————————————————————————
   window.addEventListener('load', () => {
     setTimeout(() => {
       document.getElementById('blackOverlay').remove();
-      // if user never clicked Polaroid, we can still show the sequence 
-      // once the fade is done—optional!
       if (!audioSource) startImageInterval();
     }, 2000);
   });

@@ -88,7 +88,6 @@
   let buffer = null;
   let source = null;
 
-  // 1) decode up front
   fetch('audio/disappearchapter1.wav')
     .then(r => r.arrayBuffer())
     .then(a => audioContext.decodeAudioData(a))
@@ -96,14 +95,12 @@
       buffer = decodedBuffer;
       console.log('Audio loaded. Duration: ' + buffer.duration + 's');
 
-      // 2) if we came from index.html, start immediately
       if (sessionStorage.getItem('playAudio') === 'true') {
         sessionStorage.removeItem('playAudio');
         startPlayback();
       }
     });
 
-  // this is exactly what your old startAudio() did…
   function startPlayback() {
     if (source) return;
     source = audioContext.createBufferSource();
@@ -113,14 +110,12 @@
     source.loopEnd = buffer.duration;
     source.connect(audioContext.destination);
 
-    // resume() is needed in some browsers if audioContext was suspended
     audioContext.resume().then(() => {
       source.start(0);
       console.log('Audio started automatically.');
     });
   }
 
-  // 3) for any later clicks, still allow manual start
   document.body.addEventListener('click', function onBodyClick() {
     if (buffer && !source) {
       startPlayback();
@@ -199,7 +194,6 @@
     }
 
     function moveToChapter2() {
-    // remember to autoplay Chapter 2’s audio
     sessionStorage.setItem('playChapter2Audio', 'true');
     window.location.href = "chapter2.html";
     }

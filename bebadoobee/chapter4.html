@@ -86,14 +86,12 @@
     console.log('Chapter 4 audio started.');
   }
 
-  // load audio buffer
   fetch('audio/disappearchapter4.wav')
     .then(r => r.arrayBuffer())
     .then(arr => audioContext.decodeAudioData(arr))
     .then(decoded => {
       buffer = decoded;
       console.log('Audio loaded. Duration:', buffer.duration);
-      // if we came straight from Chapter 3’s Polaroid…
       if (sessionStorage.getItem('playChapter4Audio') === 'true') {
         sessionStorage.removeItem('playChapter4Audio');
         startChapter4Audio();
@@ -101,13 +99,11 @@
       }
     });
 
-  // keep the manual-fallback click handler too
   document.body.addEventListener('click', function onFirstClick() {
     startChapter4Audio();
     document.body.removeEventListener('click', onFirstClick);
   });
 
-  // — image sequence setup (unchanged) —
   const intervalContainer = document.getElementById("intervalContainer");
   const intervalImage     = document.getElementById("intervalImage");
   const finalBtn          = document.getElementById("finalBtn");

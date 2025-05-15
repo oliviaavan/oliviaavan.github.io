@@ -70,7 +70,6 @@
     console.log('Chapter 5 audio started.');
   }
 
-  // 1) load & decode
   fetch('audio/disappearchapter5.wav')
     .then(r => r.arrayBuffer())
     .then(a => audioContext.decodeAudioData(a))
@@ -78,14 +77,12 @@
       buffer = decoded;
       console.log('Audio loaded. Duration: ' + buffer.duration + 's');
 
-      // 2) if we came from Chapter 4’s button, autoplay now
       if (sessionStorage.getItem('playChapter5Audio') === 'true') {
         sessionStorage.removeItem('playChapter5Audio');
         startPlayback();
       }
     });
 
-  // 3) fallback: manual start on click
   document.body.addEventListener('click', () => {
     startPlayback();
 
