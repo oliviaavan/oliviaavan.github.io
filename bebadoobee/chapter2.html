@@ -9,9 +9,7 @@
   <title>Chapter 2</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
@@ -36,13 +34,13 @@
     }
 
     .interval-container {
+      position: relative;
       display: none;
       height: 100vh;
       width: 100vw;
       background: black;
       justify-content: center;
       align-items: center;
-      position: relative;
     }
 
     #intervalImage {
@@ -55,10 +53,11 @@
       position: absolute;
       top: 0;
       left: 0;
-      z-index: 9;
+      z-index: 999;
       width: 100vw;
       height: 100vh;
       display: none;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -72,10 +71,9 @@
     <img src="images/chapter3/046risograph.png" alt="Image 46" class="scroll-image">
   </div>
 
-  <!-- autoplay container -->
   <div class="interval-container" id="intervalContainer">
     <img id="intervalImage" src="" alt="Chapter 4 Image">
-    <img src="images/polaroid/polaroid1.png" alt="Polaroid" id="polaroidBtn">
+    <img src="images/polaroid/polaroid1.png" alt="Continue" id="polaroidBtn">
   </div>
 
   <script>
@@ -88,57 +86,54 @@
       source = audioContext.createBufferSource();
       source.buffer = buffer;
       source.loop = true;
-      source.loopStart = 0;
-      source.loopEnd = buffer.duration;
       source.connect(audioContext.destination);
-      audioContext.resume().then(() => {
-        source.start(0);
-      });
+      audioContext.resume().then(() => source.start(0));
     }
 
     fetch('audio/disappearchapter2.wav')
       .then(r => r.arrayBuffer())
       .then(a => audioContext.decodeAudioData(a))
-      .then(decodedBuffer => {
-        buffer = decodedBuffer;
+      .then(decoded => {
+        buffer = decoded;
         if (sessionStorage.getItem('playChapter2Audio') === 'true') {
           sessionStorage.removeItem('playChapter2Audio');
           startPlayback();
         }
       });
 
-    document.body.addEventListener('click', function onBodyClick() {
+    document.body.addEventListener('click', function oneTimePlay() {
       startPlayback();
-      if (source) document.body.removeEventListener('click', onBodyClick);
+      if (source) document.body.removeEventListener('click', oneTimePlay);
     });
 
-    const scrollContainer = document.getElementById("scrollContainer");
-    const intervalContainer = document.getElementById("intervalContainer");
-    const intervalImage = document.getElementById("intervalImage");
-    const polaroidBtn = document.getElementById("polaroidBtn");
-    const intervalImages = [];
+    const scrollContainer   = document.getElementById('scrollContainer');
+    const intervalContainer = document.getElementById('intervalContainer');
+    const intervalImage     = document.getElementById('intervalImage');
+    const polaroidBtn       = document.getElementById('polaroidBtn');
 
+    const intervalImages = [];
     for (let i = 47; i <= 66; i++) {
-      const paddedId = String(i).padStart(3, '0');
-      intervalImages.push(`images/chapter4/${paddedId}risograph.png`);
+      intervalImages.push(`images/chapter4/${String(i).padStart(3,'0')}risograph.png`);
     }
 
     let intervalIndex = 0;
-    let intervalTimer;
+    let intervalTimer = null;
 
     function showIntervalImage() {
-      intervalImage.src = intervalImages[intervalIndex++];
-      if (intervalIndex >= intervalImages.length) {
+      if (intervalIndex < intervalImages.length) {
+        intervalImage.src = intervalImages[intervalIndex++];
+      } else {
         clearInterval(intervalTimer);
-        polaroidBtn.style.display = "block";
+        polaroidBtn.style.display = 'block';
       }
     }
 
     function startImageInterval() {
-      scrollContainer.style.display = 'none';
+      scrollContainer.style.display   = 'none';
       intervalContainer.style.display = 'flex';
-      intervalImage.src = intervalImages[intervalIndex++];
-      intervalTimer = setInterval(showIntervalImage, 155);
+      intervalIndex = 0;
+      showIntervalImage(); 
+      intervalTimer = setInterval(showIntervalImage, 180);
     }
 
     scrollContainer.addEventListener('scroll', () => {
