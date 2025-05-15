@@ -55,16 +55,14 @@
   </div>
 
   <script>
-  let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  let buffer = null, source = null;
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  let buffer = null;
+  let source = null;
 
   function startPlayback() {
     if (!buffer || source) return;
     source = audioContext.createBufferSource();
     source.buffer = buffer;
-    source.loop = true;
-    source.loopStart = 0;
-    source.loopEnd = buffer.duration;
     source.connect(audioContext.destination);
     audioContext.resume().then(() => source.start(0));
     console.log('Chapter 5 audio started.');
@@ -76,84 +74,62 @@
     .then(decoded => {
       buffer = decoded;
       console.log('Audio loaded. Duration: ' + buffer.duration + 's');
-
       if (sessionStorage.getItem('playChapter5Audio') === 'true') {
         sessionStorage.removeItem('playChapter5Audio');
         startPlayback();
       }
-    });
+    })
+    .catch(err => console.error('Error loading audio:', err));
 
-  document.body.addEventListener('click', () => {
-    startPlayback();
+  document.body.addEventListener('click', startPlayback, { once: true });
 
-      if (source) {
-        console.log('Already playing.');
-        return;
+  const imageElement = document.getElementById("image-display");
+  let currentImageIndex = 116;
+  const firstMax = 169;
+  let intervalTime = 300;
+  const speedUpRate = 20;
+  const minInterval = 80;
+
+  function playFirstSequence() {
+    currentImageIndex++;
+    imageElement.src = `images/chapter12/${currentImageIndex}risograph.png`;
+
+    if (currentImageIndex < firstMax) {
+      if (intervalTime > minInterval) {
+        intervalTime -= speedUpRate;
       }
-
-      source = audioContext.createBufferSource();
-      source.buffer = buffer;
-
-      source.connect(audioContext.destination);
-      source.start(0);
-
-      document.body.removeEventListener('click', startAudio);
-      console.log('Audio started with loopStart 0 and loopEnd ' + buffer.duration);
-    });
-
-    const imageElement = document.getElementById("image-display");
-
-    let currentImageIndex = 116;
-    const firstMax = 169;
-
-    let intervalTime = 300;
-    const speedUpRate = 20;
-    const minInterval = 80;
-
-    function playFirstSequence() {
-      currentImageIndex++;
-      imageElement.src = `images/chapter12/${currentImageIndex}risograph.png`;
-
-      if (currentImageIndex < firstMax) {
-        if (intervalTime > minInterval) {
-          intervalTime -= speedUpRate;
-        }
-        setTimeout(playFirstSequence, intervalTime);
-      } else {
-        setTimeout(transitionToSecondSequence, 500); 
-      }
+      setTimeout(playFirstSequence, intervalTime);
+    } else {
+      setTimeout(transitionToSecondSequence, 500);
     }
+  }
 
-    let secondImageIndex = 169;
-    const secondMax = 203;
-    const secondInterval = 160;
+  let secondImageIndex = 169;
+  const secondMax = 203;
+  const secondInterval = 160;
 
-    function transitionToSecondSequence() {
-      imageElement.style.opacity = 0;
-      setTimeout(playSecondSequence, 1000); // wait for the fade out to finish
+  function transitionToSecondSequence() {
+    imageElement.style.opacity = 0;
+    setTimeout(playSecondSequence, 1000);
+  }
+
+  function playSecondSequence() {
+    imageElement.style.opacity = 1;
+    secondImageIndex++;
+    if (secondImageIndex > secondMax) return;
+    imageElement.src = `images/chapter14/${secondImageIndex}risograph.png`;
+    console.log(`Showing: images/chapter14/${secondImageIndex}risograph.png`);
+    setTimeout(playSecondSequence, secondInterval);
+  }
+
+  setTimeout(playFirstSequence, intervalTime);
+
+  window.addEventListener("load", () => {
+    const overlay = document.getElementById("blackOverlay");
+    if (overlay) {
+      setTimeout(() => overlay.remove(), 2000);
     }
-
-    function playSecondSequence() {
-      imageElement.style.opacity = 1;
-      
-      secondImageIndex++;
-      if (secondImageIndex > secondMax) return;
-
-      const secondImagePath = `images/chapter14/${secondImageIndex}risograph.png`;
-      imageElement.src = secondImagePath;
-      console.log(`Showing: ${secondImagePath}`);
-
-      setTimeout(playSecondSequence, secondInterval);
-    }
-
-    setTimeout(playFirstSequence, intervalTime);
-
-    window.addEventListener("load", () => {
-      const overlay = document.getElementById("blackOverlay");
-      setTimeout(() => {
-        overlay.remove();
-      }, 2000);
-    });
+  });
   </script>
 </body>
 
